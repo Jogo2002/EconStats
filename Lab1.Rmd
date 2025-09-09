@@ -1,0 +1,34 @@
+---
+title: "LabOne"
+output: html_document
+date: "2025-09-09"
+Name: "Josh Goldhaber" 
+---
+
+```{r setup}
+library(tidyverse)
+library(ggplot2)
+```
+
+3. Create a descriptive statistics table. Feel free to use any package or method you feel works best.
+
+```{r}
+```
+
+
+4. Produce a histogram on the temperature of pizza upon delivery. Is temperature skewed, if so, how?
+```{r}
+ggplot(INSERT DATA HERE, aes(x = temperature)) +
+  geom_histogram(binwidth = 5) +
+  labs(
+    x = "Pizza Temp",
+    y = "Count",
+    title = "Pizza Temperature",
+    subtitle = "Binwidth = 10"
+  )
+
+```
+
+
+5. Produce a barplot comparing the average time for delivery by branch location.
+6. Create a boxplot to for delivery time comparing the times across the three branches.
