@@ -1,0 +1,113 @@
+---
+title: "Lab 1"
+output:
+  html_document: default
+  pdf_document: default
+date: "2025-09-04"
+---
+
+Here is your setup. You can technically do this anywhere, but keeping it at the start keeps your code nice and tidy, and R can run this chunk when you load your RMD and tell you if anything is missing or needs to be updated before you start coding.
+
+If you do not have a package installed yet, use "install.packes("package name")" to install it (note the quotes around the package name). Run this ONCE (running it again updates it if needed), then delete it and use "library(package name)" to load it. 
+```{r setup}
+library(tidyverse)
+library(ggplot2)
+```
+
+In an R Markdown file (.rmd), this space is for text, and code needs to be in a code "chunk". RMD's keep your code organized, and are also good for knitting files like .pdf and .html so you can write assignments, make papers you would submit to a journal, or reports you would submit to a manager. I often use R script files (.r) as well, which is just one large code chunk with no text. I use this for everyday tasks that aren't in a report.
+
+Let's make a code chunk. You can either type out "```{r}",  press space a few times, then type "```". This can be tedious, so you can also press ctrl+alt+i to do it automatically.
+
+Anything written between these lines will be code. Once your code chunk is made, you can run everything in it in order by pressing the green "play button" on the top right of the chunk. You can also run each line individually one by one (which you often want to do) by having your cursor on the line and pressing ctrl+enter.
+
+Now let's run a basic line. Make your computer say hi to you by using the print() command with "Hello World".
+```{r}
+print("hello world")
+
+#if you put a hashtag, it will mnake a comment. This comment is just text, and won't interfere with your code. Its useful to make notes about what your lines of code do (super necessary when working in groups)
+
+#Next let's define an object. When you define an object, it will show up in the top right of your screen under your "global environment"/"workspace".
+
+greetings = "hello world"
+#now you have the "greetings" object. It isn a value. There's lots of types of objects, like datasets (aka dataframes), lists, and even regression outputs/graphs
+#now use the print() command to print "greetings". Notice how R will help you by filling in "greetings".
+print(greetings)
+
+df = read.csv("pizza.csv")
+print()
+```
+
+Next let's load in our data. Let's directly load in the file. Go to where you downloaded it, and copy/paste the file directory (ctrl+right click+copy as path for windows users). Use read.csv and store it in an object like "df".
+```{r}
+df <- read.csv("C:\\Users\\mjken\\OneDrive\\Documents\\Econ091\\Lab 1\\pizza.csv")
+
+#you can also load in files by defining a directory. I recommend doing this, that way you only have to type this long nasty file directory once, then you just need to name the files. It also makes anything you save go to this folder so you don't need to track it down. This is very good for working in groups, so everyone is using the same folder with the same data (like a OneDrive cloud folder).
+setwd("C:\\Users\\mjken\\OneDrive\\Documents\\Econ091\\Lab 1")
+df <- read.csv("pizza.csv")
+#click on the df in your workspace on the top right to pop out a new window and view it
+
+```
+
+Now let's do some descriptive stats:
+
+
+```{r}
+
+```
+
+```{r}
+#use the mean() function to find the average bill for these orders
+mean(df$price)
+#what happened? we have NA's. We need to do this calculation without NA's
+mean(df$price, na.rm = TRUE)
+
+#what if I want to know the avergave bill for Rhonda?
+df_filtered <- filter(df, df$operator == "Rhonda")
+mean(df_filtered$price, na.rm = TRUE)
+
+#i want to know the avg bill for all operators. I will use dplyr, the king of data manipulation/cleaning
+df_dplyr <- df %>%
+  group_by(operator) %>% #until I ungroup, all future functions will be done on each unique entry of Operator
+  mutate(avg_price_byoperator = mean(price, na.rm = TRUE)) #mutate makes a new column
+
+#I want to make this dataset more neat because I only care about the price and operator
+df_dplyr2 <- df_dplyr %>%
+  select(operator, avg_price_byoperator)
+
+#why the duplicates?
+df_dplyr3 <- df_dplyr2 %>%
+  distinct() #gets rid of all duplicates (in this case, its a lot since it's only 2 columns)
+
+df_dplyr3 <- df_dplyr2 %>%
+  distinct() %>%
+  na.omit() #let's also get rid of NA's
+
+#I can combine all of these together into one pipe
+df_dplyr4 <- df %>%
+  group_by(operator) %>%
+  mutate(avg_price_byoperator = mean(price, na.rm = TRUE)) %>%
+  select(operator, avg_price_byoperator) %>%
+  distinct() %>%
+  na.omit()
+
+print(df_dplyr4)
+
+#every new object you make multiplies how much data you have loaded in your environment, be careful if you are working with big data and  small computer
+
+```
+
+Now let's make a bar chart of this:
+```{r}
+ggplot(df_dplyr4, aes(x = operator, y = avg_price_byoperator, fill = avg_price_byoperator)) +
+  geom_col(alpha = 0.7) +
+  labs(
+    fill = "Average Bill",
+    title = "Average Bills For Each Operator",
+    x = "Operator",
+    y = "Average Bill"
+  ) +
+  theme_minimal()
+
+```
+
+Now let's knit the document. On the top of the GUI, look for the knit icon. Click that. PDFs are usually the standard, but that requires downloading and using LaTEX which can be a *real* pain to install and deal with. So for this class, just knit to HTML which is the simplest.
