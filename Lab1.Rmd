@@ -10,6 +10,12 @@ library(tidyverse)
 library(ggplot2)
 ```
 
+
+```{r}
+pizza <- df
+
+```
+
 3. Create a descriptive statistics table. Feel free to use any package or method you feel works best.
 
 ```{r}
@@ -18,17 +24,55 @@ library(ggplot2)
 
 4. Produce a histogram on the temperature of pizza upon delivery. Is temperature skewed, if so, how?
 ```{r}
-ggplot(INSERT DATA HERE, aes(x = temperature)) +
-  geom_histogram(binwidth = 5) +
+
+pizza |>
+  ggplot( aes(x = temperature)) +
+    geom_histogram(binwidth = 5) +
+    labs(
+      x = "Pizza Temp",
+      y = "Count",
+      title = "Pizza Temperature",
+      subtitle = "Binwidth = 10"
+    ) +theme_minimal()
+
+```
+temperature is skewed left. 
+
+5. Produce a barplot comparing the average time for delivery by branch location.
+
+```{r}
+pizza |>
+  group_by(area) |>
+  summarise(meanDeliveryTime = mean(delivery_min, na.rm = TRUE)) |>
+  ggplot(aes(x = area, y = meanDeliveryTime, fill = area)) +
+  geom_col() +
   labs(
-    x = "Pizza Temp",
-    y = "Count",
-    title = "Pizza Temperature",
-    subtitle = "Binwidth = 10"
-  )
+    x = "Branch",
+    y = "Average Delivery Time (mins)",
+    title = "Average Delivery Time by Branch"
+  ) +
+  theme_minimal()
 
 ```
 
 
-5. Produce a barplot comparing the average time for delivery by branch location.
 6. Create a boxplot to for delivery time comparing the times across the three branches.
+
+```{r}
+pizza |> 
+  group_by(area)|>
+  ggplot(aes(x = area, y = delivery_min))+
+  geom_boxplot() + 
+  labs(
+    x = "Branch",
+    y = "Delivery Time",
+    title = "Delivery Time per Branch"
+  )
+```
+
+
+
+
+
+
+
