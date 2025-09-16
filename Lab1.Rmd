@@ -8,6 +8,7 @@ Name: "Josh Goldhaber"
 ```{r setup}
 library(tidyverse)
 library(ggplot2)
+library(skimr)
 ```
 
 
@@ -19,6 +20,7 @@ pizza <- df
 3. Create a descriptive statistics table. Feel free to use any package or method you feel works best.
 
 ```{r}
+skim(pizza)
 ```
 
 
@@ -61,12 +63,13 @@ pizza |>
 ```{r}
 pizza |> 
   group_by(area)|>
-  ggplot(aes(x = area, y = delivery_min))+
+  ggplot(aes(x = area, y = delivery_min, fill = area))+
   geom_boxplot() + 
   labs(
     x = "Branch",
     y = "Delivery Time",
-    title = "Delivery Time per Branch"
+    title = "Delivery Time per Branch",
+    fill = "Areas" 
   )
 ```
 
